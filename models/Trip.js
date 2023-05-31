@@ -11,7 +11,7 @@ const tripSchema = Schema(
       type:Number,
       default:0
     },
-    currentPassengers: {
+    emptySeats: {
       type: Number,
       default:0
 

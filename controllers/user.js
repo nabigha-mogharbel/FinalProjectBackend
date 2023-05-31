@@ -46,15 +46,12 @@ export const register=async(req,res)=>{
     }
 }
 export const login=async(req,res)=>{
-    console.log(req.body)
     try{
        const user=await Model.findOne({phone:req.body.phone})
        if(!user){return res.status(401).send({message:"User not found"})}
        let verified=await bcrypt.compare(req.body.password, user.password )
-       console.log(user)
        if(!verified){return res.status(402).send({message:"Wrong phone number or password"})}
        if(verified){
-        console.log("heree")
         const token = jwt.sign(
             { userId: user._id, userPhone:user.phone, role:user.role },
             process.env.JWT_SECRET,
