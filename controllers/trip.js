@@ -129,17 +129,16 @@ export const book=async(req,res, next)=>{
           }
 }
 export const manageBook=async(req,res)=>{
+  console.log("req.headers")
+  console.log(req.params.id, req.body)
+
   try{
-      Model.updateOne({_id:req.params.id}, { $push: { "bookedPAssenger": req.body.id, "status":"pending"} }).then(
+      Model.findOneAndUpdate({ "_id": req.params.id, "bookedPassengers._id": req.body.id }, { $set: { "bookedPassengers.$.status": req.body.status}}).then(
               function (success) {
                 if (success.length === 0) {
-                  return res
-                    .status(203)
-                    .send({ success: true, message: "No data found" });
+                  return res.status(203).send({ success: true, message: "No data found" });
                 }
-                return res
-                  .status(200)
-                  .send({ message: "Trip retrieved", data: success });
+                return res.status(200).send({ message: "Trip retrieved", data: success });
               },
               function (reject) {
                 return res
