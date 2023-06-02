@@ -75,6 +75,9 @@ app.use(function (err, req, res, next) {
     message: err.message,
   });
 });
+app.use("*",(req,res)=>{
+  res.status(404).send({message:"api endpoint not found"})
+})
 
 
 // io.on('connection', (socket) => {
