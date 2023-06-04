@@ -35,9 +35,10 @@ export const remove=async(req,res)=>{
 export const add=async(req,res)=>{
     try{
         console.log("batata")
-
+        let data=req.body
+        data.busStops=JSON.parse(data.busStops)
     let newLine=new Model(
-        req.body
+       data
     );
    newLine.save().then(
     function (success) {

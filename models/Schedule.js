@@ -22,8 +22,15 @@ const scheduleSchema = Schema(
 
     },
     days: [{type:String, trim:true, }]
-  
     ,
+    defaultDriverId:{
+      type:Schema.Types.ObjectId,
+      ref:"User"
+    },
+    defaultBusId:{
+      type:Schema.Types.ObjectId,
+      ref:"Bus"
+    },
     lineId:{
         type:Schema.Types.ObjectId,
         ref:"Line"
@@ -34,7 +41,7 @@ const scheduleSchema = Schema(
   }
 );
 scheduleSchema.pre(["find", "findOne"], function () {
-  this.populate(["lineId"]);
+  this.populate(["lineId", "defaultBusId"]);
 });
 const Model = model("Schedule", scheduleSchema);
 export default Model;

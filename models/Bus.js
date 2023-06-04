@@ -11,13 +11,6 @@ const busSchema = Schema(
       type: Number,
       required: [true, "Please enter your last capacity"],
     },
-    batata:{
-      type:String,
-      required:true
-    },
-    sarara:{
-      type:String
-    }
   },
   {
     collection: "Bus",

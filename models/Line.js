@@ -29,11 +29,7 @@ const lineSchema = Schema(
         type:Number
       }
     }]
-    ,
-    schedulesId:{
-        type:Schema.Types.ObjectId,
-        ref:"Schedule"
-    }
+    
   },
   {
     collection: "Line",

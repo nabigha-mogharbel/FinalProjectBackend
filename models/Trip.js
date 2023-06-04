@@ -37,7 +37,6 @@ const tripSchema = Schema(
       status:{
         type:String
       }
-
   }],
     busId: {type:Schema.Types.ObjectId, ref:"Bus" },
     tripStatus:{

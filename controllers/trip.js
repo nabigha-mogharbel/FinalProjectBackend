@@ -1,75 +1,7 @@
 import Model from "../models/Trip.js"
 import Schedule from "../models/Schedule.js"
 export const getUpcoming=async(req,res,next)=>{
-  //try{
-
-    // Schedule.find({}).then(
-    //         function (success) {
-    //           let arr=[]
-    //           success.map(sched=> {
-    //             let today = new Date();
-    //             let startTime = sched.startTime;
-    //             let endTime=sched.endTime;
-    //             let day = today.getDate();
-    //             let starttomorrow = new Date(today);
-    //             let endtomorrow=new Date(today)
-    //             //make date for tomorrow
-    //             starttomorrow.setDate(day + 1);
-    //             endtomorrow.setDate(day + 1);
-    //             //take time of mongo schedule
-    //             let startDate = new Date(startTime);
-    //             let endDate=new Date(endTime)
-    //             let starthours = startDate.getUTCHours();
-    //             let startminutes = startDate.getUTCMinutes();
-    //             let startseconds = startDate.getUTCSeconds();
-    //             let endhours = endDate.getUTCHours();
-    //             let endminutes = endDate.getUTCMinutes();
-    //             let endseconds = endDate.getUTCSeconds();
-    //             // Set the time components in starttomorrow
-    //             starttomorrow.setUTCHours(starthours);
-    //             starttomorrow.setUTCMinutes(startminutes);
-    //             starttomorrow.setUTCSeconds(startseconds);
-    //             endtomorrow.setUTCHours(endhours);
-    //             endtomorrow.setUTCMinutes(endminutes);
-    //             endtomorrow.setUTCSeconds(endseconds);
-    //             let isostartTime=starttomorrow.toISOString();
-    //             let isoendTime=endtomorrow.toISOString();
-    //             console.log(isostartTime, isoendTime)
-    //             let model= new Model({
-    //               scheduleId: sched._id,
-    //               totalPassenger: 0,
-    //               emptySeats:30,
-    //               date: isostartTime,
-    //               lon:33.2211,
-    //               lat:33.0154,
-    //               bookedPassengers:[],
-    //               busId: "647ad25305d6983741edc586",
-    //               tripStatus:"scheduled",
-    //               busStatus:"N/A",
-    //               message:"The trip is scheduled",
-    //               busManagerId:"647ad25305d6983741edc586",
-    //               startTime:isostartTime,
-    //               endTime:isoendTime,
-    //             })
-    //             arr.push(model)
-
-    //           })
-    //           Model.insertMany(arr).then(function(success){
-    //             return res.status(201).send({data:success, message:"trips created"})
-    //           }, function(reject){
-    //             return res.status(400).send({data:reject})
-    //           })
-
-    //         },
-    //         function (reject) {
-    //           return res
-    //             .status(400)
-    //             .send({ error: reject, message: "Can't retrieve trips data" });
-    //         }
-    //       );
-    //     } catch (error) {
-    //       next(error);
-    //     }
+  
     try{
       const today = new Date(); // Assuming you have defined the 'today' and 'tomorrow' variables correctly
 const tomorrow = new Date();
@@ -240,12 +172,85 @@ export const manageBook=async(req,res)=>{
 export const remove=async(req,res)=>{
 
 }
+export const scheduler=async(req,res,next)=>{
+  // try{}catch(e){next(e)}
+  try{
 
+    Schedule.find({}).then(
+            function (success) {
+              let arr=[]
+              success.map(sched=> {
+                let today = new Date();
+                let startTime = sched.startTime;
+                let endTime=sched.endTime;
+                let day = today.getDate();
+                let starttomorrow = new Date(today);
+                let endtomorrow=new Date(today)
+                //make date for tomorrow
+                starttomorrow.setDate(day + 1);
+                endtomorrow.setDate(day + 1);
+                //take time of mongo schedule
+                let startDate = new Date(startTime);
+                let endDate=new Date(endTime)
+                let starthours = startDate.getUTCHours();
+                let startminutes = startDate.getUTCMinutes();
+                let startseconds = startDate.getUTCSeconds();
+                let endhours = endDate.getUTCHours();
+                let endminutes = endDate.getUTCMinutes();
+                let endseconds = endDate.getUTCSeconds();
+                // Set the time components in starttomorrow
+                starttomorrow.setUTCHours(starthours);
+                starttomorrow.setUTCMinutes(startminutes);
+                starttomorrow.setUTCSeconds(startseconds);
+                endtomorrow.setUTCHours(endhours);
+                endtomorrow.setUTCMinutes(endminutes);
+                endtomorrow.setUTCSeconds(endseconds);
+                let isostartTime=starttomorrow.toISOString();
+                let isoendTime=endtomorrow.toISOString();
+                console.log(isostartTime, sched.defaultBusId)
+                let model= new Model({
+                  scheduleId: sched._id,
+                  totalPassenger: 0,
+                  emptySeats:30,
+                  date: isostartTime,
+                  lon:33.2211,
+                  lat:33.0154,
+                  bookedPassengers:[],
+                  busId: sched.defaultBusId,
+                  tripStatus:"scheduled",
+                  busStatus:"N/A",
+                  message:"The trip is scheduled",
+                  busManagerId:sched.defaultDriverId,
+                  startTime:isostartTime,
+                  endTime:isoendTime,
+                })
+                arr.push(model)
+              })
+              Model.insertMany(arr).then(function(success){
+                return res.status(201).send({data:success, message:"trips created"})
+              }, function(reject){
+                return res.status(400).send({data:reject})
+              })
+
+            },
+            function (reject) {
+              return res
+                .status(400)
+                .send({ error: reject, message: "Can't retrieve trips data" });
+            }
+          );
+        } catch (error) {
+          next(error);
+        }
+}
 export const add=async(req,res)=>{
     try{
-
+    const def=await Schedule.find({_id:req.body.scheduleId})
+    let data=req.body;
+    data.busId=def.defaultBusId._id;
+    data.busManagerId=def.defaultDriverId._id
     let newLine=new Model(
-        req.body
+        data
     );
     newLine.save().then(
         function (success) {

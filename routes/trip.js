@@ -1,14 +1,15 @@
 import auth from "../middleware/auth.js"
 import express from 'express';
 const router = express.Router();
-import {add, getAll, get, update, book, manageBook, deleteBook, getUpcoming} from '../controllers/trip.js';
-router.post("/", auth(["passenger", "manager"]), add)
-router.get("/",auth(["passenger", "manager"]), getAll)
-router.get("/trip/:id",auth(["passenger", "manager"]), get)
+import {add, getAll, get, update, book, manageBook, scheduler,deleteBook, getUpcoming} from '../controllers/trip.js';
+router.post("/",  add)
+router.get("/", getAll)
+router.get("/trip/:id", get)
 router.get("/sched/upcoming", getUpcoming)
-router.put("/:id", auth(["passenger", "manager"]), update)
-router.put("/book/:id", auth(["passenger"]), book)
-router.put("/book/delete/:id", auth(["passenger"]), deleteBook)
-router.put("/book/manager/:id", auth(["manager"]), manageBook)
+router.put("/:id",  update)
+router.put("/book/:id", book)
+router.put("/book/delete/:id", deleteBook)
+router.put("/book/manager/:id",manageBook)
+router.get("/sched", scheduler)
 
 export default router

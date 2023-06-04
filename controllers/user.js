@@ -41,6 +41,36 @@ export const update = async (req, res) => {
 };
 const remove = async (req, res) => {};
 
+export const add = async (req, res) => {
+  //res.send({message:"whaaaaaaaa"})
+  console.log(req.body);
+  //return res.send({msg:"yy"})
+  try {
+    console.log("batata");
+    let { firstName, lastName, password, phone, role } = req.body;
+    let hashed = await bcrypt.hash(password, 10);
+
+    let newUser = new Model({
+      firstName: firstName,
+      lastName: lastName,
+      password: hashed,
+      role: role,
+      phone: phone,
+    });
+    newUser.save().then(
+      function (success) {
+        return res
+          .status(201)
+          .send({ success: true, message: "New user added" });
+      },
+      function (reject) {
+        return res.status(400).send({ msg: "Incorrect data", error: reject });
+      }
+    );
+  } catch (error) {
+    next(error);
+  }
+};
 export const register = async (req, res) => {
   //res.send({message:"whaaaaaaaa"})
   console.log(req.body);

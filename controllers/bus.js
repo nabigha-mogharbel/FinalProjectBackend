@@ -29,7 +29,7 @@ export const remove = async (req, res) => {};
 export const add = async (req, res, next) => {
   try {
     console.log("batata");
-
+    
     let newBus = new Model(req.body);
 
     newBus.save().then(
