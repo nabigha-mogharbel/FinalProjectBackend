@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 //import connectDB from "./config/db.js";
+import cron from "node-cron"
 import cors from "cors";
 import createError from "http-errors";
 import cookieParser from "cookie-parser";
@@ -10,6 +11,9 @@ import http from "http"
 import DB from "./config/db.js"
 import {PORT, MODE, SOCKET} from "./config/index.js"
 import Model from "./models/Trip.js"
+import BusModel from "./models/Bus.js"
+import ScheduleModel from "./models/Schedule.js"
+import UserModel from "./models/User.js"
 //import Routes from "./routes/index.js"
 import userRoutes from "./routes/user.js"
 import busRoutes from "./routes/bus.js"
@@ -64,21 +68,24 @@ DB()
     process.exit(1);
   });
 // create and error object,catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 // error handler
 app.use(function (err, req, res, next) {
-  console.log(err)
-  res.status(err.status || 500).send({
+  // console.log(err)
+ return res.status(err.status || 500).send({
     success: false,
-    message: err.message,
+    message: "balouta",
   });
 });
-app.use("*",(req,res)=>{
-  res.status(404).send({message:"api endpoint not found"})
-})
 
+app.use("*",(req,res)=>{
+  return res.status(404).send({message:"api endpoint not found"})
+})
+cron.schedule('0 18 * * 0,1,2,3,4', () => {
+  console.log('running a task every minute');
+});
 
 // io.on('connection', (socket) => {
 //   console.log("conn")
@@ -93,7 +100,14 @@ io.on("connection", (socket) => {
   console.log("connected client")
 
 });
-Model.watch().on('change', data => io.emit("tripWatching", data));
+Model.watch({ fullDocument: "updateLookup" }).on('change', async data => {
+  let bus=await BusModel.findById(data.fullDocument.busId);
+  let schedule= await ScheduleModel.findById(data.fullDocument.scheduleId)
+  let driver= await UserModel.findById(data.fullDocument.busManagerId)
+  data.fullDocument.scheduleId=schedule
+  data.fullDocument.busId=bus
+  data.fullDocument.busManagerId=driver
+  io.emit("tripWatching", data)});
 
 /*io.on("connection",(socket)=>{
  

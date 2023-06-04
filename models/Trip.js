@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import validate from 'mongoose-validator' 
+
 const tripSchema = Schema(
   {
     scheduleId: {
@@ -13,13 +13,22 @@ const tripSchema = Schema(
     },
     emptySeats: {
       type: Number,
-      default:0
+      default:30
 
     },
     date: {
       type: Date,
       required: [true, "Please enter the trip date"],
     },
+    lon:{
+      type:Schema.Types.Decimal128,
+      required:true
+    },
+    lat:{
+      type:Schema.Types.Decimal128,
+      required:true
+    }
+    ,
     bookedPassengers: [{
       passengerId:{
         type:Schema.Types.ObjectId,
@@ -30,7 +39,7 @@ const tripSchema = Schema(
       }
 
   }],
-    busId: {type:Schema.Types.ObjectId, ref:"Bus", require:true },
+    busId: {type:Schema.Types.ObjectId, ref:"Bus" },
     tripStatus:{
         type:String
     },
@@ -39,6 +48,12 @@ const tripSchema = Schema(
     },
     message:{
         type:String
+    },
+    startTime:{
+      type:Date
+    },
+    endTime:{
+      type:Date
     },
     busManagerId:{
         type:Schema.Types.ObjectId,
@@ -49,7 +64,7 @@ const tripSchema = Schema(
     collection: "Trip",
   }
 );
-tripSchema.pre(["find", "findOne"], function(){
+tripSchema.pre(["find", "findOne", "updateOne", "findOneAndUpdate"], function(){
   this.populate(["scheduleId", "busId", "busManagerId"])
 })
 
