@@ -6,8 +6,6 @@ import cors from "cors";
 import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import {Server} from "socket.io";
-import http from "http"
 import DB from "./config/db.js"
 import {PORT, MODE, SOCKET} from "./config/index.js"
 import Model from "./models/Trip.js"
@@ -21,8 +19,7 @@ import lineRoutes from "./routes/line.js"
 import tripRoutes from "./routes/trip.js"
 import scheduleRoutes from "./routes/schedule.js"
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {cors:{origin:"*"}});
+
 app.use(express.json());
 app.use(cors());
 
@@ -34,9 +31,7 @@ app.use(bodyParser.json());
 if (MODE === "dev") {
   app.use(morgan("dev"));
 }
-server.listen(SOCKET, () => {
-  console.log(`TripoLine WebSocket is running on ${SOCKET}`)
-})
+
 
 app.get("/", (req, res) => {
   res.status(200).send("TripoLine Backend is running...");
@@ -96,18 +91,7 @@ cron.schedule('0 18 * * 0,1,2,3,4', () => {
 //     console.log('user disconnected');
 //   });
 // });
-io.on("connection", (socket) => {
-  console.log("connected client")
 
-});
-Model.watch({ fullDocument: "updateLookup" }).on('change', async data => {
-  let bus=await BusModel.findById(data.fullDocument.busId);
-  let schedule= await ScheduleModel.findById(data.fullDocument.scheduleId)
-  let driver= await UserModel.findById(data.fullDocument.busManagerId)
-  data.fullDocument.scheduleId=schedule
-  data.fullDocument.busId=bus
-  data.fullDocument.busManagerId=driver
-  io.emit("tripWatching", data)});
 
 /*io.on("connection",(socket)=>{
  
