@@ -76,4 +76,70 @@ app.use("*",(req,res)=>{
 })
 cron.schedule('0 18 * * 0,1,2,3,4', () => {
   console.log('running a task every minute');
+  try{
+
+    Schedule.find({}).then(
+            function (success) {
+              let arr=[]
+              success.map(sched=> {
+                let today = new Date();
+                let startTime = sched.startTime;
+                let endTime=sched.endTime;
+                let day = today.getDate();
+                let starttomorrow = new Date(today);
+                let endtomorrow=new Date(today)
+                //make date for tomorrow
+                starttomorrow.setDate(day + 1);
+                endtomorrow.setDate(day + 1);
+                //take time of mongo schedule
+                let startDate = new Date(startTime);
+                let endDate=new Date(endTime)
+                let starthours = startDate.getUTCHours();
+                let startminutes = startDate.getUTCMinutes();
+                let startseconds = startDate.getUTCSeconds();
+                let endhours = endDate.getUTCHours();
+                let endminutes = endDate.getUTCMinutes();
+                let endseconds = endDate.getUTCSeconds();
+                // Set the time components in starttomorrow
+                starttomorrow.setUTCHours(starthours);
+                starttomorrow.setUTCMinutes(startminutes);
+                starttomorrow.setUTCSeconds(startseconds);
+                endtomorrow.setUTCHours(endhours);
+                endtomorrow.setUTCMinutes(endminutes);
+                endtomorrow.setUTCSeconds(endseconds);
+                let isostartTime=starttomorrow.toISOString();
+                let isoendTime=endtomorrow.toISOString();
+                console.log(isostartTime, sched.defaultBusId)
+                let model= new Model({
+                  scheduleId: sched._id,
+                  totalPassenger: 0,
+                  emptySeats:30,
+                  date: isostartTime,
+                  lon:35.835748,
+                  lat:34.434422,
+                  bookedPassengers:[],
+                  busId: sched.defaultBusId,
+                  tripStatus:"scheduled",
+                  busStatus:"N/A",
+                  message:"The trip is scheduled",
+                  busManagerId:sched.defaultDriverId,
+                  startTime:isostartTime,
+                  endTime:isoendTime,
+                })
+                arr.push(model)
+              })
+              Model.insertMany(arr).then(function(success){
+                return console.log("trips created", new Date())
+              }, function(reject){
+                return console.log("trips are not created", new Date())
+              })
+
+            },
+            function (reject) {
+              return console.log("trips are not created", new Date())
+            }
+          );
+        } catch (error) {
+          return console.log("trips are not created", new Date())
+        }
 });

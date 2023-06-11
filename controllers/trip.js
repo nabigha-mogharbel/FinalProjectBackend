@@ -236,7 +236,7 @@ export const scheduler=async(req,res,next)=>{
             function (reject) {
               return res
                 .status(400)
-                .send({ error: reject, message: "Can't retrieve trips data" });
+                .send({ error: reject, message: "Can't set todays trips schedule" });
             }
           );
         } catch (error) {
