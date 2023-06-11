@@ -74,9 +74,9 @@ app.use(function (err, req, res, next) {
 app.use("*",(req,res)=>{
   return res.status(404).send({message:"api endpoint not found"})
 })
-cron.schedule('0 18 * * 0,1,2,3,4', () => {
+cron.schedule('45 14 * * 0,1,2,3,4', () => {
   console.log('running a task every minute');
-  try{
+ /* try{
 
     Schedule.find({}).then(
             function (success) {
@@ -141,5 +141,5 @@ cron.schedule('0 18 * * 0,1,2,3,4', () => {
           );
         } catch (error) {
           return console.log("trips are not created", new Date())
-        }
-});
+        }*/
+}, null, false, "Asia/Beirut");
