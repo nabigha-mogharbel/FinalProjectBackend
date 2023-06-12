@@ -10,8 +10,8 @@ import DB from "./config/db.js"
 import {PORT, MODE, SOCKET} from "./config/index.js"
 import Model from "./models/Trip.js"
 import BusModel from "./models/Bus.js"
-import ScheduleModel from "./models/Schedule.js"
-import UserModel from "./models/User.js"
+import Schedule from "./models/Schedule.js"
+import TripModel from "./models/Trip.js"
 //import Routes from "./routes/index.js"
 import userRoutes from "./routes/user.js"
 import busRoutes from "./routes/bus.js"
@@ -74,7 +74,7 @@ app.use(function (err, req, res, next) {
 app.use("*",(req,res)=>{
   return res.status(404).send({message:"api endpoint not found"})
 })
-cron.schedule('0 18 * * 0,1,2,3,4', () => {
+cron.schedule('7 21 * * 0,1,2,3,4', () => {
   try{
 
     Schedule.find({}).then(
@@ -109,7 +109,7 @@ cron.schedule('0 18 * * 0,1,2,3,4', () => {
                 let isostartTime=starttomorrow.toISOString();
                 let isoendTime=endtomorrow.toISOString();
                 console.log(isostartTime, sched.defaultBusId)
-                let model= new Model({
+                let model= new TripModel({
                   scheduleId: sched._id,
                   totalPassenger: 0,
                   emptySeats:30,
@@ -127,18 +127,18 @@ cron.schedule('0 18 * * 0,1,2,3,4', () => {
                 })
                 arr.push(model)
               })
-              Model.insertMany(arr).then(function(success){
+              TripModel.insertMany(arr).then(function(success){
                 return console.log("trips created", new Date())
               }, function(reject){
-                return console.log("trips are not created", new Date())
+                return console.log("trips are not created 1", reject)
               })
 
             },
             function (reject) {
-              return console.log("trips are not created", new Date())
+              return console.log("trips are not created 2", reject)
             }
           );
         } catch (error) {
-          return console.log("trips are not created", new Date())
+          return console.log("trips are not created 3", error)
         }
 }, null, false, "Asia/Beirut");

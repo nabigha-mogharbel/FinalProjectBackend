@@ -14,7 +14,7 @@ const transactions = await Model.find({
     $gte: today,
     $lt: tomorrow
   }
-});
+}).sort({ startTime: 1 });
 return res.send({data:transactions})
     }catch(e){next(e)}
 }
