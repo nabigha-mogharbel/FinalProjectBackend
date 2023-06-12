@@ -33,6 +33,15 @@ io.on("connection", (socket) => {
   console.log("connected client", new Date().toISOString())
 
 });
+io.emit("tripwhatching", "hi")
+
+io.on("msghandler",(socket)=>{
+  socket.emit("tripwhatching", "wayle ana")
+})
+
+// io.on("testbatata", (socket) => {
+//   socket.emit("khara", "harra");
+// });
 Model.watch({ fullDocument: "updateLookup" }).on('change', async data => {
   let bus=await BusModel.findById(data.fullDocument.busId);
   let schedule= await ScheduleModel.findById(data.fullDocument.scheduleId)
