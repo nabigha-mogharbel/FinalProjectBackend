@@ -74,7 +74,7 @@ app.use(function (err, req, res, next) {
 app.use("*",(req,res)=>{
   return res.status(404).send({message:"api endpoint not found"})
 })
-cron.schedule('7 21 * * 0,1,2,3,4', () => {
+cron.schedule('0 21 * * 0,1,2,3,4', () => {
   try{
 
     Schedule.find({}).then(
